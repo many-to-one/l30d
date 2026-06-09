@@ -1,0 +1,14 @@
+mkdir -p app/routers
+mkdir -p app/collectors
+mkdir -p app/core
+
+touch app/main.py
+touch app/routers/last30days.py
+touch app/collectors/reddit.py
+touch app/collectors/hn.py
+touch app/core/normalize.py
+touch app/core/rank.py
+touch app/core/summarize.py
+
+touch requirements.txt
+touch README.md

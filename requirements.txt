@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+httpx
+google-generativeai
+alembic
+psycopg2-binary
+sqlalchemy

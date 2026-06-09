@@ -1,0 +1,77 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: l30d_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # -U to użytkownik, -d to nazwa bazy (pobierane ze zmiennych)
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s # Daje Postgresowi czas na zainicjowanie plików bazy
+
+  web:
+    build: .
+    container_name: l30d_app
+    ports:
+
+      - "${UVICORN_PORT}:${UVICORN_PORT}"
+    volumes:
+      - ./app:/app
+    environment:
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn main:app --host ${UVICORN_HOST} --port ${UVICORN_PORT} --reload
+    # command: gunicorn main:app
+    #   --workers 1
+    #   --worker-class uvicorn.workers.UvicornWorker
+    #   --bind ${UVICORN_HOST}:${UVICORN_PORT}
+    #   --timeout 120
+
+  redis:
+    image: redis:7
+    container_name: l30d_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  worker:
+    build: .
+    container_name: l30d_worker
+    restart: always
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    command: python app/worker.py
+
+
+volumes:
+  postgres_data:
+  redis_data:
