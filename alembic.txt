@@ -1,0 +1,86 @@
+01
+Zainstaluj Alembic i zależności
+Alembic musi być zainstalowany razem z async SQLAlchemy.
+
+pip install alembic
+
+Jeśli używasz async PostgreSQL: pip install asyncpg
+
+Upewnij się, że masz SQLAlchemy 2.x
+
+02
+Zainicjalizuj Alembic w projekcie
+Tworzy strukturę katalogów i pliki konfiguracyjne.
+
+W terminalu: alembic init alembic
+
+Powstanie folder alembic/
+
+Plik alembic.ini pojawi się w katalogu głównym
+
+W alembic/env.py będziesz konfigurować async engine
+
+03
+Skonfiguruj połączenie z bazą w alembic.ini
+Ważne
+Alembic musi wiedzieć, jak połączyć się z Twoją bazą.
+
+Znajdź linię sqlalchemy.url
+
+Ustaw np.: sqlalchemy.url = postgresql+asyncpg://user:pass@db:5432/appdb
+
+Możesz też zostawić pustą i wczytać URL z env w env.py
+
+04
+Przełącz Alembic na tryb async
+Domyślnie Alembic działa synchronicznie — trzeba go dostosować.
+
+W alembic/env.py zamień engine = create_engine(...) na async:
+
+python
+from sqlalchemy.ext.asyncio import create_async_engine
+engine = create_async_engine(config.get_main_option("sqlalchemy.url"))
+Użyj async with engine.begin() as conn:
+
+Wywołaj await conn.run_sync(Base.metadata.create_all) tylko przy autogeneracji
+
+05
+Podłącz swoje modele SQLAlchemy
+Alembic musi wiedzieć, gdzie znajdują się modele, aby generować migracje.
+
+W env.py dodaj import do Base:
+
+python
+from app.db.base import Base
+Ustaw:
+
+python
+target_metadata = Base.metadata
+06
+Utwórz pierwszą migrację
+Generuje plik migracji na podstawie zmian w modelach.
+
+alembic revision --autogenerate -m "initial"
+
+Sprawdź plik w alembic/versions/
+
+Upewnij się, że wygenerowane zmiany są poprawne
+
+07
+Zastosuj migracje do bazy
+Wykonuje migracje w Twojej bazie danych.
+
+alembic upgrade head
+
+Uruchomi wszystkie migracje do najnowszej wersji
+
+Jeśli używasz Dockera, wykonaj to w kontenerze backendu
+
+08
+Dodawaj kolejne migracje przy zmianach modeli
+Workflow
+Za każdym razem, gdy zmienisz modele, generujesz nową migrację.
+
+alembic revision --autogenerate -m "add image_jobs table"
+
+alembic upgrade head

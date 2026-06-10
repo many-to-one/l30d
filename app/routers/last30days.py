@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from collectors.reddit import fetch_reddit
 from collectors.hn import fetch_hn
 from core.normalize import normalize
@@ -7,23 +7,29 @@ from core.summarize import summarize_with_ai
 
 import redis
 import json
-from app.db import get_session
-from app.models import Job
+
+from db import get_session
+from models import Job
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
+
+# Redis (synchronous client OK for queue)
 r = redis.Redis.from_url("redis://redis:6379")
 
-@router.post("/job")
-async def create_job():
-    session = get_session()
 
+@router.post("/job")
+async def create_job(session: AsyncSession = Depends(get_session)):
     job = Job(status="pending")
     session.add(job)
-    session.commit()
+    await session.commit()
+    await session.refresh(job)
 
+    # Push job to queue
     r.rpush("jobs_queue", json.dumps({"id": job.id}))
 
     return {"job_id": job.id, "status": "queued"}
+
 
 @router.get("/last30days")
 async def last30days(query: str = Query(...)):

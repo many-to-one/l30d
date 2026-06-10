@@ -1,0 +1,80 @@
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    margin: 0;
+    padding: 0;
+}
+header {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    color: white;
+}
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+input[type="text"] {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+}
+button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+button:hover {
+    background: #2563eb;
+}
+.results {
+    margin-top: 1rem;
+}
+.result-item {
+    background: #334155;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+.result-item a {
+    color: #38bdf8;
+    text-decoration: none;
+}
+.summary {
+    background: #0ea5e9;
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.spinner {
+    border: 4px solid #334155;
+    border-top: 4px solid #38bdf8;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 1rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

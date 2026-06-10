@@ -4,4 +4,14 @@ httpx
 google-generativeai
 alembic
 psycopg2-binary
-sqlalchemy
+sqlalchemy[asyncio]
+asyncpg
+redis
+pydantic[email]
+pydantic-settings
+python-jose[cryptography]
+bcrypt==4.0.1
+passlib==1.7.4
+python-multipart
+jinja2
+requests

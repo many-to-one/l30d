@@ -1,6 +1,7 @@
 import google.generativeai as genai
+from core.config import settings
 
-genai.configure(api_key="TWOJ_GEMINI_API_KEY")
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 async def summarize_with_ai(posts):
     text = "\n".join(

@@ -12,3 +12,6 @@ touch app/core/summarize.py
 
 touch requirements.txt
 touch README.md
+
+# Nadaj prawa do całego katalogu projektu (jeśli nie możnazapisać zmian w pliku "Permissions deny")
+sudo chown -R $USER:$USER .
