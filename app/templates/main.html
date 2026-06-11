@@ -33,35 +33,6 @@
         <div id="summary" class="summary" style="display:none;"></div>
     </main>
 
-    <script>
-        const form = document.getElementById('searchForm');
-        const resultsDiv = document.getElementById('results');
-        const summaryDiv = document.getElementById('summary');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const query = document.getElementById('query').value;
-            resultsDiv.innerHTML = '<p>⏳ Pobieranie danych...</p>';
-            summaryDiv.style.display = 'none';
-
-            const res = await fetch(`/last30days?query=${encodeURIComponent(query)}`);
-            const data = await res.json();
-
-            resultsDiv.innerHTML = '';
-            data.results.forEach(item => {
-                const el = document.createElement('div');
-                el.className = 'result-item';
-                el.innerHTML = `
-                    <a href="${item.url}" target="_blank"><h3>${item.title}</h3></a>
-                    <p>💬 Komentarze: ${item.comments} | 👍 Score: ${item.score}</p>
-                    <small>Źródło: ${item.source}</small>
-                `;
-                resultsDiv.appendChild(el);
-            });
-
-            summaryDiv.textContent = data.summary;
-            summaryDiv.style.display = 'block';
-        });
-    </script>
+    <script src="/static/js/main.js"></script>
 </body>
 </html>
